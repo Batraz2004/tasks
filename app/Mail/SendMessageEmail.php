@@ -17,10 +17,7 @@ class SendMessageEmail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(readonly User $user, readonly string $message)
-    {
-        //
-    }
+    public function __construct(public readonly User $user, public readonly string $mess) {}
 
     /**
      * Get the message envelope.
@@ -38,10 +35,10 @@ class SendMessageEmail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.question.index',
-            with:[
+            view: 'emails.message',
+            with: [
                 'user' => $this->user,
-                'question' => $this->message,
+                'mess' => $this->mess,
             ]
         );
     }
