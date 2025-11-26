@@ -1,0 +1,131 @@
+<?php
+
+namespace App\Http\Controllers\Task;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\TaskCreateRequest;
+use App\Http\Resources\TaskResource;
+use App\Models\Task;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Throwable;
+
+class TaskController extends Controller
+{
+    public function create(TaskCreateRequest $request)
+    {
+        try {
+            /** @var User $user */
+            $user = Auth::user();
+
+            $task = $user
+                ->tasks()
+                ->create($request->getData());
+
+            $task->load('parent');
+
+            return response()->json([
+                'data' => TaskResource::make($task),
+            ], 200);
+        } catch (Throwable $th) {
+            Log::debug("произошла ошибка:" . $th->getMessage() . " строка:" . $th->getLine());
+
+            return response()->json([
+                'data' => 'проищошла ошибка',
+                'code' => $th->getCode(),
+            ], $th->getCode());
+        }
+    }
+
+    public function update(TaskCreateRequest $request, $id)
+    {
+        try {
+            /** @var User $user */
+            $user = Auth::user();
+
+            $task = $user
+                ->tasks()
+                ->where('id', $id)
+                ->update($request->getData());
+
+            $task = $user->tasks()->where('id', $id)->first();
+            $task->load('parent');
+
+            return response()->json([
+                'data' => TaskResource::make($task),
+            ], 200);
+        } catch (Throwable $th) {
+            Log::debug("произошла ошибка:" . $th->getMessage() . " строка:" . $th->getLine());
+
+            return response()->json([
+                'data' => 'проищошла ошибка',
+                'code' => $th->getCode(),
+            ], $th->getCode());
+        }
+    }
+
+    public function list()
+    {
+        try {
+            /** @var User $user */
+            $user = Auth::user();
+            $tasks = $user?->tasks;
+
+            return response()->json([
+                'data' => TaskResource::collection($tasks),
+                'code' => 200,
+            ], 200);
+        } catch (Throwable $th) {
+            Log::debug("произошла ошибка:" . $th->getMessage() . " строка:" . $th->getLine());
+
+            return response()->json([
+                'data' => 'проищошла ошибка',
+                'code' => $th->getCode(),
+            ], $th->getCode());
+        }
+    }
+
+    public function getById($id)
+    {
+        try {
+            /** @var User $user */
+            $user = Auth::user();
+            $task = $user?->tasks()->getQuery()->firstWhere(['id' => $id]);
+
+            return response()->json([
+                'data' => TaskResource::make($task),
+                'code' => 200,
+            ], 200);
+        } catch (Throwable $th) {
+            Log::debug("произошла ошибка:" . $th->getMessage() . " строка:" . $th->getLine());
+
+            return response()->json([
+                'data' => 'проищошла ошибка',
+                'code' => $th->getCode(),
+            ], $th->getCode());
+        }
+    }
+
+    public function deleteById($id)
+    {
+        try {
+            /** @var User $user */
+            $user = Auth::user();
+            $task = $user?->tasks()->getQuery()->where('id', $id)->delete();
+
+            return response()->json([
+                'data' => 'запись удалена',
+                'code' => 200,
+            ], 200);
+        } catch (Throwable $th) {
+            Log::debug("произошла ошибка:" . $th->getMessage() . " строка:" . $th->getLine());
+
+            return response()->json([
+                'data' => 'проищошла ошибка',
+                'code' => $th->getCode(),
+            ], $th->getCode());
+        }
+    }
+}

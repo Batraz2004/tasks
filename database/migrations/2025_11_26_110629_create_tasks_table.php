@@ -14,12 +14,20 @@ return new class extends Migration
     {
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
+
             $table->string('title');
             $table->text('description');
             $table->enum('status', TaskStatusEnum::cases())->default(TaskStatusEnum::in_progress->value);
-            $table->foreignId('parent_id')->constrained('tasks');
-            $table->foreignId('user_id')->constrained();
-            $table->timestamp('ending_at');
+
+            $table->foreignId('parent_id')
+                ->nullable()
+                ->constrained('tasks')
+                ->cascadeOnDelete();
+            $table->foreignId('user_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
+            $table->timestamp('ending_at')->nullable();
             $table->timestamps();
         });
     }
