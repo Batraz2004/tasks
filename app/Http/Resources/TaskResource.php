@@ -21,6 +21,7 @@ class TaskResource extends JsonResource
             'status' => $this->status,
             'user_id' => $this->user_id,
             'parent' => TaskResource::make($this->whenLoaded('parent')),
+            'file_image' => $this->getFirstMediaUrl('task_image'),
             'ending_at' => $this->ending_at,
         ];
     }

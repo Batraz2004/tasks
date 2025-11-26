@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Task;
 
+use App\Enums\TaskStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TaskCreateRequest;
 use App\Http\Resources\TaskResource;
 use App\Models\Task;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -25,6 +27,8 @@ class TaskController extends Controller
                 ->create($request->getData());
 
             $task->load('parent');
+            $task->addMedia($request->file_image)
+                ->toMediaCollection('task_image');
 
             return response()->json([
                 'data' => TaskResource::make($task),
@@ -44,7 +48,6 @@ class TaskController extends Controller
         try {
             /** @var User $user */
             $user = Auth::user();
-
             $task = $user
                 ->tasks()
                 ->where('id', $id)
@@ -53,6 +56,12 @@ class TaskController extends Controller
             $task = $user->tasks()->where('id', $id)->first();
             $task->load('parent');
 
+            if($task->status->value == TaskStatusEnum::done->value)
+            {
+                $task->ending_at = Carbon::now();
+                $task->save();
+            }
+    
             return response()->json([
                 'data' => TaskResource::make($task),
             ], 200);

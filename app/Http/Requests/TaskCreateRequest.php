@@ -4,7 +4,6 @@ namespace App\Http\Requests;
 
 use App\Enums\TaskStatusEnum;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class TaskCreateRequest extends FormRequest
@@ -29,6 +28,7 @@ class TaskCreateRequest extends FormRequest
             'description' => ['required', 'max:500'],
             'status' => ['required', Rule::enum(TaskStatusEnum::class)],
             'parent_id' => ['nullable', 'integer', 'exists:tasks,id'],
+            'file_image' => ['nullable', 'image', 'mimes:png,jpg,jpeg']
         ];
     }
 
