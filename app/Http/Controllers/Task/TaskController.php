@@ -19,6 +19,7 @@ class TaskController extends Controller
 {
     public function create(TaskRequest $request)
     {
+        try {
             /** @var User $user */
             $user = Auth::user();
 
@@ -35,7 +36,14 @@ class TaskController extends Controller
             return response()->json([
                 'data' => TaskResource::make($task),
             ], 200);
-        
+        } catch (Throwable $th) {
+            Log::debug("произошла ошибка:" . $th->getMessage() . " строка:" . $th->getLine());
+
+            return response()->json([
+                'data' => 'проищошла ошибка',
+                'code' => $th->getCode(),
+            ], $th->getCode());
+        }
     }
 
     public function update(TaskRequest $request, $id)
