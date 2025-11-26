@@ -12,6 +12,8 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SendMessageEmail;
 use Throwable;
 
 class TaskController extends Controller
@@ -30,6 +32,8 @@ class TaskController extends Controller
             $task->addMedia($request->file_image)
                 ->toMediaCollection('task_image');
 
+            Mail::to(config('services.email.info'))->send(new SendMessageEmail($user, "таска создана"));
+    
             return response()->json([
                 'data' => TaskResource::make($task),
             ], 200);
@@ -56,12 +60,11 @@ class TaskController extends Controller
             $task = $user->tasks()->where('id', $id)->first();
             $task->load('parent');
 
-            if($task->status->value == TaskStatusEnum::done->value)
-            {
+            if ($task->status->value == TaskStatusEnum::done->value) {
                 $task->ending_at = Carbon::now();
                 $task->save();
             }
-    
+
             return response()->json([
                 'data' => TaskResource::make($task),
             ], 200);

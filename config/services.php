@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'email' => [
+        'info' => 'no-reply@gmail.com'
+    ],
+
 ];
