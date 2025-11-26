@@ -57,3 +57,100 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+
+## Managment balance api app =)
+Приложение по созданию задач со вложеностями
+
+## Технологии
+- PHP 8.4
+- Laravel 12
+- mysql 8.0
+
+
+
+## api endpoints
+
+### создание новой таски
+```http
+POST api/task/
+{
+    "title": new task,
+    "status": in_progress,
+    "description": description,
+    "parent_id": 1,
+    "file_image": file.png,
+}
+```
+Response: {"data": {
+        "id": 64,
+        "title": "new tasg",
+        "description": "new",
+        "status": "in_progress",
+        "user_id": 3,
+        "parent": null,
+        "file_image": "http://127.0.0.1:93/storage/34/photo_2025-11-17_20-02-52.jpg",
+        "ending_at": null
+    }
+}
+
+### обновление новой таски
+```http
+PUT http://127.0.0.1:93/api/task/3?title=new tasg&status=done&description=new !f&parent_id=6
+```
+Response: {"data": {
+        "id": 64,
+        "title": "new tasg",
+        "description": "new",
+        "status": "in_progress",
+        "user_id": 3,
+        "parent": null,
+        "file_image": "http://127.0.0.1:93/storage/34/photo_2025-11-17_20-02-52.jpg",
+        "ending_at": null
+    }
+}
+
+### получение тасок
+```http
+GET api/task/
+```
+Response: {"data": [
+        {
+            "id": 3,
+            "title": "new tasg",
+            "description": "new !f",
+            "status": "done",
+            "user_id": 3,
+            "file_image": "",
+            "ending_at": "2025-11-26 13:16:04"
+        },
+    ...
+    ]
+}
+
+### получение таски
+```http
+GET api/task/id
+```
+Response: {"data": [
+        {
+            "id": 3,
+            "title": "new tasg",
+            "description": "new !f",
+            "status": "done",
+            "user_id": 3,
+            "file_image": "",
+            "ending_at": "2025-11-26 13:16:04"
+        },
+    ...
+    ]
+}
+
+### удаление таски
+```http
+GET api/task/id
+```
+Response: {
+    "data": "запись удалена",
+    "code": 200
+}
